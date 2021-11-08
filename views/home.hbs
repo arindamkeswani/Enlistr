@@ -1,4 +1,6 @@
-<table class="table table-light table-bordered table-striped table-hover" style="overflow-x: auto">
+
+
+<table class="table table-light table-bordered table-striped table-hover text-center" style="font-size: 12px;">
     <thead class="thead-dark">
         <tr>
             <th scope="col">#</th>
@@ -16,24 +18,25 @@
         </tr>
     </thead>
     <tbody>
+        {{#each rows}}
         <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>B.Sc</td>
-            <td>Chemistry</td>
-            <td>8.9</td>
-            <td>Organic Chemistry, Reactions</td>
-            <td>2022</td>
-            <td>Teaching Assistant (2018-19)</td>
-            <td>ottomatic@gmail.com</td>
-            <td>1126722872</td>
+            <th scope="row">{{this.id}}</th>
+            <td>{{this.first_name}}</td>
+            <td>{{this.last_name}}</td>
+            <td>{{this.latest_degree}}</td>
+            <td>{{this.major}}</td>
+            <td>{{this.cgpa}}</td>
+            <td>{{this.domain_skills}}</td>
+            <td>{{this.graduation_year}}</td>
+            <td>{{this.achievements}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.contact}}</td>
             <td class="text-end" style="width:1px; white-space:nowrap;">
                 <a href="#" type="button" class="btn btn-light btn-small"> <i class="bi bi-eye"></i></a>
                 <a href="#" type="button" class="btn btn-primary btn-small"> <i class="bi bi-pencil"></i></a>
                 <a href="#" type="button" class="btn btn-danger btn-small"> <i class="bi bi-trash"></i></a>
             </td>
         </tr>
-
+        {{/each}}
     </tbody>
 </table>
