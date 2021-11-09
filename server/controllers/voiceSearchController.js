@@ -1,6 +1,6 @@
-let recordBtn = document.querySelector(".record-btn");
-let textArea = document.querySelector("textarea");
-let transcriptBtn = document.querySelector("#txt");
+let recordBtn = document.querySelector("#mic");
+let textArea = document.querySelector("#search-box");
+let submitBtn = document.querySelector("#search-submit");
 var speechRecognition = window.webkitSpeechRecognition;
 var recognition = new speechRecognition();
 

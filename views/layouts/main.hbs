@@ -28,10 +28,12 @@
                     </li>
 
                 </ul>
-                <form class="d-flex" method="POST" action= "/" novalidate>
-                    <button class="btn btn-outline-light btn-md bi bi-mic" style="border-radius: 15px; margin-right:10px;"></button>
-                    <input class="form-control me-2" type="search" placeholder="Search" name = "search" aria-label="Search">
-                    <button class="btn btn-outline-light" type="submit">Search</button>
+                <button id="mic" class="btn btn-outline-light btn-md bi bi-mic"
+                    style="border-radius: 15px; margin-right:10px;"></button>
+                <form class="d-flex" method="POST" action="/" novalidate>
+                    <input class="form-control me-2" type="search" id="search-box" placeholder="Search" name="search"
+                        aria-label="Search">
+                    <button class="btn btn-outline-light" id="search-submit" type="submit">Search</button>
                 </form>
             </div>
         </div>
@@ -44,6 +46,58 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" defer></script>
+    <script defer>
+        let recordBtn = document.querySelector("#mic");
+        let textArea = document.querySelector("#search-box");
+        let submitBtn = document.querySelector("#search-submit");
+        var speechRecognition = window.webkitSpeechRecognition;
+        var recognition = new speechRecognition();
+
+        var spokenContent = "";
+
+        recognition.continuous = true;
+        var isRecordingOn = false;
+
+        recognition.onerror = function () {
+            alert("Failed to perform voice-to-text at thia time. Please try again in some time.")
+        }
+
+        recognition.onresult = function (event) {
+            var current = event.resultIndex;
+
+            var transcript = event.results[current][0].transcript;
+
+            spokenContent += transcript;
+            textArea.value = spokenContent;
+        }
+        recordBtn.addEventListener("click", function () {
+            if (isRecordingOn) { //turn recording off
+                isRecordingOn = false;
+                recordBtn.style.backgroundColor = "white";
+                recordBtn.style.color = "black";
+                // recordBtn.style.border = "none";
+                recognition.stop();
+                console.log("Content:", spokenContent);
+
+            } else { //turn recording on
+                // console.log("Recording on");
+                isRecordingOn = true;
+                recordBtn.style.backgroundColor = "lightgrey";
+                recordBtn.style.color = "red";
+                // recordBtn.style.border = "2px solid grey";
+
+                if (spokenContent.length) { //check if text is already present
+                    spokenContent = "";
+                }
+
+                recognition.start();
+                textArea.value = "";
+            }
+        })
+
+
+    </script>
 </body>
 
 </html>
