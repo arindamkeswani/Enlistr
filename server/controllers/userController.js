@@ -71,3 +71,42 @@ exports.find = (req, res) => {
 
     })
 }
+
+//Render Add new user page
+exports.form = (req, res) => {
+    res.render('add-user');
+}
+
+
+//Submit details of new user
+exports.create = (req, res) => {
+
+    // res.render('add-user')
+
+    const {first_name, last_name, latest_degree, major, cgpa, domain_skills, graduation_year, achievements, email, contact} = req.body;
+    pool.getConnection((err, connection) => {
+        if (err)
+            throw err; //not connected
+        console.log('Connected as ID (user controller Search DB ): ', connection.threadId);
+
+        let searchTerm = req.body.search
+        
+        // use the connection
+        //using "?" to prevent SQL_injection
+        var searchShort = '%' + searchTerm + '%';
+        connection.query('INSERT INTO user SET first_name= ?, last_name=?, latest_degree=?, major=?, cgpa=?, domain_skills=?, graduation_year=?, achievements=?, email=?, contact=?', [first_name, last_name, latest_degree, major, cgpa, domain_skills, graduation_year, achievements, email, contact],(err, rows) => {
+            //When done with the connection, release it
+            connection.release();
+
+            if(!err){
+                res.render('add-user',{alert: "User added successfully!"});
+            }else{
+                console.log(err);
+            }
+
+            // console.log("The data from user table: \n", rows);
+        });
+
+    })
+
+}
