@@ -110,3 +110,8 @@ exports.create = (req, res) => {
     })
 
 }
+
+//Edit user
+exports.edit= (req,res) => {
+    res.render('edit-user');
+}
