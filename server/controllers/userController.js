@@ -32,9 +32,9 @@ exports.view = (req, res) => {
             //When done with the connection, release it
             connection.release();
 
-            if(!err){
-                res.render('home', {rows});
-            }else{
+            if (!err) {
+                res.render('home', { rows });
+            } else {
                 console.log(err);
             }
 
@@ -52,17 +52,17 @@ exports.find = (req, res) => {
         console.log('Connected as ID (user controller Search DB ): ', connection.threadId);
 
         let searchTerm = req.body.search
-        
+
         // use the connection
         //using "?" to prevent SQL_injection
         var searchShort = '%' + searchTerm + '%';
-        connection.query('SELECT * FROM user where status = "active" AND (domain_skills LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR latest_degree LIKE ? OR major LIKE ? OR cgpa LIKE ?OR graduation_year LIKE ?OR achievements LIKE ?OR email LIKE ?OR contact LIKE ?)    ', [searchShort, searchShort, searchShort, searchShort,searchShort, searchShort, searchShort, searchShort,searchShort, searchShort], (err, rows) => {
+        connection.query('SELECT * FROM user where status = "active" AND (domain_skills LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR latest_degree LIKE ? OR major LIKE ? OR cgpa LIKE ?OR graduation_year LIKE ?OR achievements LIKE ?OR email LIKE ?OR contact LIKE ?)    ', [searchShort, searchShort, searchShort, searchShort, searchShort, searchShort, searchShort, searchShort, searchShort, searchShort], (err, rows) => {
             //When done with the connection, release it
             connection.release();
 
-            if(!err){
-                res.render('home', {rows});
-            }else{
+            if (!err) {
+                res.render('home', { rows });
+            } else {
                 console.log(err);
             }
 
@@ -83,24 +83,24 @@ exports.create = (req, res) => {
 
     // res.render('add-user')
 
-    const {first_name, last_name, latest_degree, major, cgpa, domain_skills, graduation_year, achievements, email, contact} = req.body;
+    const { first_name, last_name, latest_degree, major, cgpa, domain_skills, graduation_year, achievements, email, contact } = req.body;
     pool.getConnection((err, connection) => {
         if (err)
             throw err; //not connected
         console.log('Connected as ID (user controller Search DB ): ', connection.threadId);
 
         let searchTerm = req.body.search
-        
+
         // use the connection
         //using "?" to prevent SQL_injection
         var searchShort = '%' + searchTerm + '%';
-        connection.query('INSERT INTO user SET first_name= ?, last_name=?, latest_degree=?, major=?, cgpa=?, domain_skills=?, graduation_year=?, achievements=?, email=?, contact=?', [first_name, last_name, latest_degree, major, cgpa, domain_skills, graduation_year, achievements, email, contact],(err, rows) => {
+        connection.query('INSERT INTO user SET first_name= ?, last_name=?, latest_degree=?, major=?, cgpa=?, domain_skills=?, graduation_year=?, achievements=?, email=?, contact=?', [first_name, last_name, latest_degree, major, cgpa, domain_skills, graduation_year, achievements, email, contact], (err, rows) => {
             //When done with the connection, release it
             connection.release();
 
-            if(!err){
-                res.render('add-user',{alert: "User added successfully!"});
-            }else{
+            if (!err) {
+                res.render('add-user', { alert: "User added successfully!" });
+            } else {
                 console.log(err);
             }
 
@@ -111,7 +111,98 @@ exports.create = (req, res) => {
 
 }
 
-//Edit user
-exports.edit= (req,res) => {
-    res.render('edit-user');
+//Edit user page data retrieval 
+exports.edit = (req, res) => {
+    // res.render('edit-user');
+    pool.getConnection((err, connection) => {
+        // if (err)
+        //     throw err; //not connected
+        // console.log('Connected as ID (user controller View DB ): ', connection.threadId);
+
+
+        // use the connection
+        connection.query('SELECT * FROM user where id=?', [req.params.id], (err, rows) => {
+            //When done with the connection, release it
+            connection.release();
+
+            if (!err) {
+                res.render('edit-user', { rows });
+            } else {
+                console.log(err);
+            }
+            // console.log('The data from user table: \n', rows);
+        });
+
+    })
+}
+
+
+//update user
+exports.update = (req, res) => {
+    console.log("THIS IS N ID:", req.params.id);
+    const { first_name, last_name, latest_degree, major, cgpa, domain_skills, graduation_year, achievements, email, contact } = req.body;
+    pool.getConnection((err, connection) => {
+        if (err)
+            throw err; //not connected
+        console.log('Connected as ID (user controller View DB ): ', connection.threadId);
+
+
+        // use the connection
+        connection.query('UPDATE user SET first_name=?, last_name=?, latest_degree=?, major=?, cgpa=?, domain_skills=?, graduation_year=?, achievements=?, email=?, contact=? WHERE id=?', [first_name, last_name, latest_degree, major, cgpa, domain_skills, graduation_year, achievements, email, contact, req.params.id], (err, rows) => {
+            //When done with the connection, release it
+            connection.release();
+
+            if (!err) {
+                pool.getConnection((err, connection) => {
+                    if (err)
+                        throw err; //not connected
+                    console.log('Connected as ID (user controller View DB ): ', connection.threadId);
+
+
+                    // use the connection
+                    connection.query('SELECT * FROM user where id=?', [req.params.id], (err, rows) => {
+                        //When done with the connection, release it
+                        connection.release();
+
+                        if (!err) {
+                            res.render('edit-user', { rows,   alert: `${first_name} ${last_name}'s details have been updated successfully.` });
+                        } else {
+                            console.log(err);
+                        }
+
+                    });
+
+                })
+            } else {
+                console.log(err);
+            }
+
+        });
+
+    })
+}
+
+
+//delete user
+exports.delete = (req, res) => {
+    // res.render('edit-user');
+    pool.getConnection((err, connection) => {
+        // if (err)
+        //     throw err; //not connected
+        // console.log('Connected as ID (user controller View DB ): ', connection.threadId);
+
+
+        // use the connection
+        connection.query('UPDATE user SET status=? WHERE id=?', ['removed', req.params.id], (err, rows) => {
+            //When done with the connection, release it
+            connection.release();
+
+            if (!err) {
+                res.redirect('/');
+            } else {
+                console.log(err);
+            }
+        });
+
+    })
 }
