@@ -165,7 +165,7 @@ exports.update = (req, res) => {
                         connection.release();
 
                         if (!err) {
-                            res.render('edit-user', { rows,   alert: `${first_name} ${last_name}'s details have been updated successfully.` });
+                            res.render('edit-user', { rows, alert: `${first_name} ${last_name}'s details have been updated successfully.` });
                         } else {
                             console.log(err);
                         }
@@ -204,5 +204,20 @@ exports.delete = (req, res) => {
             }
         });
 
+    })
+}
+
+
+exports.viewProfile = (req, res) => {
+
+    pool.getConnection((err, connection) => {
+        connection.query('SELECT * FROM user WHERE id = ?', [req.params.id], (err, rows) => {
+            if (!err) {
+                res.render('view-user', { rows });
+            } else {
+                console.log(err);
+            }
+
+        });
     })
 }
