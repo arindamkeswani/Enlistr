@@ -33,7 +33,9 @@ exports.view = (req, res) => {
             connection.release();
 
             if (!err) {
-                res.render('home', { rows });
+                let removedUser = req.query.removed;
+
+                res.render('home', { rows , removedUser });
             } else {
                 console.log(err);
             }
@@ -195,10 +197,12 @@ exports.delete = (req, res) => {
         // use the connection
         connection.query('UPDATE user SET status=? WHERE id=?', ['removed', req.params.id], (err, rows) => {
             //When done with the connection, release it
+
             connection.release();
 
             if (!err) {
-                res.redirect('/');
+                let removedUser = encodeURIComponent('User successefully removed.');
+                res.redirect('/?removed=' + removedUser);
             } else {
                 console.log(err);
             }
